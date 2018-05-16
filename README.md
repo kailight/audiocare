@@ -105,25 +105,24 @@ We need newer version of node (8+) to run the node script to control the C scipt
 
 * Remove bundled node
  
-    > ...
+      > ...
     
 * Install latest stable node    
     
-    > ...
+      > ...
     
 * Install latest npm 
 
-    > ...
+      > ...
     
 * Install npm packages          
     
-    > cd /audiocare
-    > npm install
+      > cd /audiocare
+      > npm install
     
 #### Run the node wrapper script
 
-
-    > ./start
+      > ./start
     
 If no config file is found, the node script will ask you to configure itself    
     
