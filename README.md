@@ -21,11 +21,9 @@ Does magics
 *In future, if you gonna setup completely headless monitor, you can pre-configure internet
  without UI or monitor by modifying text on SD card, ask me how* 
  
-#### Configuring ALSA
+#### 1. Configuring ALSA
 
-Alsa is Advanced Linux Sound Architecture
-
-It is low-level *driver* for linux audio devices
+Alsa (Advanced Linux Sound Architecture) is low-level *driver* for linux audio devices
 
 First step would be to plug-in our devices and configure
 
@@ -35,7 +33,6 @@ Raspberry PI has Jack output by default, so we only need to plug our microphone 
     
 unmute all devices with "m", set all levels to average value
 
- 
 
 Test that microphone works
 
@@ -90,7 +87,7 @@ However you need to run
     
 from the terminal
 
-# !!!to be continued
+@todo ...
 
 #### Test the script
 
@@ -130,4 +127,14 @@ We need newer version of node (8+) to run the node script to control the C scipt
     
 If no config file is found, the node script will ask you to configure itself    
     
-**It works!** *if it doesn't, contact dev to investigate why*    
+**It works!** *if it doesn't, contact dev to investigate why*
+
+
+
+## Updating
+
+After installation is complete and script is working use
+
+    > /audiocare/update
+    
+To update the code from GIT repo
