@@ -1,0 +1,28 @@
+{
+  "name": "audiocare",
+  "version": "0.0.1",
+  "description": "None",
+  "main": "node/index.js",
+  "server": "node/server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kailight/audiocare.git"
+  },
+  "author": "Kai Light <lastgrunger@gmail.com>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/kailight/audiocare/issues"
+  },
+  "homepage": "https://github.com/kailight/audiocare#readme",
+  "dependencies": {
+    "cli-color": "^1.2.0",
+    "readline-sync": "^1.4.9"
+  },
+  "directories": {
+    "test": "test"
+  },
+  "devDependencies": {}
+}
