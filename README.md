@@ -53,17 +53,17 @@ Start CLI (terminal)
 
 * Get root access 
 
-    > sudo bash
+    \> sudo bash
 
 * Navigate to root
     
-    > cd /
+    \> cd /
 
     *we use root location for the sake of simplicity* 
 
 * Clone the repo
 
-    > git clone https://github.com/kailight/audiocare.git
+    \> git clone https://github.com/kailight/audiocare.git
     
   This will put the script into /audiocare
   
@@ -122,4 +122,4 @@ We need newer version of node (8+) to run the node script to control the C scipt
     
 If no config file is found, the node script will ask you to configure itself    
     
-**It works!** *ok it doesn't, contact dev to investigate why*    
+**It works!** *if it doesn't, contact dev to investigate why*    
