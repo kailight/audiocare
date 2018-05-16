@@ -56,24 +56,25 @@ Start CLI (terminal)
 
 * Get root access 
 
-
-    > sudo bash
+        > sudo bash
 
 * Navigate to root
     
-    
-    > cd /
+        > cd /
 
     *we use root location for the sake of simplicity* 
 
 * Clone the repo
 
-
-    > git clone https://github.com/kailight/audiocare.git
+        > git clone https://github.com/kailight/audiocare.git
     
   This will put the script into /audiocare
   
-* Chmod the repo to allow scripts execution  
+* Chmod the repo to allow scripts execution
+
+        > cd /audiocare
+        
+        > chmod -R 777 .
   
 #### Configure Jack
 
@@ -107,24 +108,24 @@ We need newer version of node (8+) to run the node script to control the C scipt
 
 * Remove bundled node
  
-    \> ...
+    > ...
     
 * Install latest stable node    
     
-    \> ...
+    > ...
     
 * Install latest npm 
 
-    \> ...
+    > ...
     
 * Install npm packages          
     
-    \> cd /audiocare
-    \> npm install
+    > cd /audiocare
+    > npm install
     
 #### Run the node wrapper script
 
-    \> ./start
+    > ./start
     
 If no config file is found, the node script will ask you to configure itself    
     
