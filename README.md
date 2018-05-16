@@ -35,13 +35,16 @@ Raspberry PI has Jack output by default, so we only need to plug our microphone 
     
 unmute all devices with "m", set all levels to average value
 
-    > aplay filename.wav
-    
-to test that speakers work
+ 
+
+Test that microphone works
 
     > arecord filename.wav
     
-to test that microphone work
+Test that speakers work
+
+    > aplay filename.wav
+    
 
 **If the tests not passed, its best to contact developer right here**
 
@@ -53,17 +56,20 @@ Start CLI (terminal)
 
 * Get root access 
 
-    \> sudo bash
+
+    > sudo bash
 
 * Navigate to root
     
-    \> cd /
+    
+    > cd /
 
     *we use root location for the sake of simplicity* 
 
 * Clone the repo
 
-    \> git clone https://github.com/kailight/audiocare.git
+
+    > git clone https://github.com/kailight/audiocare.git
     
   This will put the script into /audiocare
   
