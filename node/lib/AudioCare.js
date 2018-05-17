@@ -7,17 +7,19 @@ let AudioCare = {
   start: () => {
     info('AudioCare.start()')
     let config = global.config
-    console.info(config);
 
     let cmd
+    process.exit()
     if (process.platform == 'win32') {
       //  ${process.cwd()}
-      cmd = `aubio\\build\\examples\\AudioCare.exe hello.wav`
+      cmd = `c/audiocare-windows-x64.exe hello.wav`
+    } else if (process.env.HOME == '/home/kailight') {
+      cmd = `./c/audiocare-ubuntu-amd64 -v -B ${config.sample_interval} -d ${config.dataCode} > ${rawFile}`
     } else {
       // cmd = `./aubio/build/examples/audiocare > ${file}`
-      cmd = `./aubio/build/examples/audiocare -B ${config.sample_interval} -d ${config.dataCode} > ${rawFile}`
+      cmd = `./c/audiocare -B ${config.sample_interval} -d ${config.dataCode} > ${rawFile}`
     }
-    info(cmd)
+    info('Running '+cmd)
     // info(config)
     // process.exit()
 

@@ -34,14 +34,15 @@ let config = global.config = {};
 // Liker.init();
 // Liker.start();
 
-const port = 3000
+const port = 80
 const requestHandler = (request, response) => {
-  console.log(request.url)
+  // console.log(request.url)
   if (request.url == '/') {
     response.writeHeader(200, {"Content-Type": "text/html"} );
     let readStream = fs.createReadStream('node/html/index.html','utf8')
     readStream.pipe(response)
   }
+  /*
   else if (request.url == '/style.css') {
     response.writeHeader(200, {"Content-Type": "text/css"} );
     let readStream = fs.createReadStream('node/html/style.css','utf8')
@@ -56,6 +57,7 @@ const requestHandler = (request, response) => {
     response.writeHeader(200, {"Content-Type": "text/html"} );
     response.end('Hello Node.js Server!')
   }
+  */
 }
 const server = http.createServer(requestHandler)
 server.listen(port, (err) => {
@@ -65,7 +67,9 @@ server.listen(port, (err) => {
   console.log(`server is listening on ${port}`)
 })
 
+
 process.on('exit', function (code) {
-  warn('Process exit code '+code);
+  warn('Process exit code '+code)
+  server.close()
   // Add shutdown logic here.
-});
+})

@@ -113,6 +113,12 @@ let message = function() {
   }
 };
 
+let messageq = function() {
+  for (let arg of arguments) {
+    console.info(clc.cyan(arg));
+  }
+};
+
 
 let gettime = (str) => {
   let s = 0
@@ -191,6 +197,7 @@ global.rootRequire  = rootRequire;
 global.quit         = quit;
 global.quitcli      = quitcli;
 global.message      = message;
+global.messageq     = messageq;
 global.info         = info;
 global.isArray      = isArray;
 global.warn         = warn;
