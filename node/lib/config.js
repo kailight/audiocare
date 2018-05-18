@@ -11,7 +11,7 @@ let askContinue = () => {
   }
 }
 let allowed = 'mfcc/mean/centroid/slope/spread/skewness/kurtosis/decrease/rollof'.split('/')
-let allowed_buffer_sizes = [512,1024,2048,4096,8192,16384,32768]
+let allowed_buffer_sizes = [512,1024,2048,4096,8192,16384,32768,65536]
 
 
 

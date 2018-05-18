@@ -4,12 +4,13 @@ let endFile = './data/data.txt'
 let rawFile = './data/raw.txt'
 
 let AudioCare = {
+
   start: () => {
     info('AudioCare.start()')
     let config = global.config
 
     let cmd
-    process.exit()
+
     if (process.platform == 'win32') {
       //  ${process.cwd()}
       cmd = `c/audiocare-windows-x64.exe hello.wav`
@@ -19,7 +20,8 @@ let AudioCare = {
       // cmd = `./aubio/build/examples/audiocare > ${file}`
       cmd = `./c/audiocare -B ${config.sample_interval} -d ${config.dataCode} > ${rawFile}`
     }
-    info('Running '+cmd)
+    info('Executing '+cmd)
+
     // info(config)
     // process.exit()
 
@@ -91,6 +93,7 @@ let AudioCare = {
     }
     // Liker.run();
   }
+
 }
 
 

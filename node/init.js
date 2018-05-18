@@ -67,6 +67,6 @@ process.on('SIGTERM', function onSigterm () {
 
 process.on('exit', function (code) {
   warn('Process exit code '+code)
-  AudioCare.end()
+  // AudioCare.end()
   // Add shutdown logic here.
 })

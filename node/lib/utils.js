@@ -3,6 +3,7 @@ const path  = require('path');
 const clc   = require('cli-color');
 const readLineSync = require('readline-sync');
 
+let outputInfo = false
 let utils = {};
 
 module.exports = utils
@@ -84,8 +85,9 @@ let rand = function(min, max) {
 };
 
 
+
 let info = function() {
-  if (isDev()) {
+  if (isDev() && outputInfo) {
     if (arguments.length > 1) {
       for (let arg of arguments) {
         console.info(arg);
@@ -153,8 +155,7 @@ let include = function( location ) {
 
 
 let env = () => {
-  return 'config'
-  if (process.env.USERNAME == 'KaiLight') {
+  if (process.env.SUDO_USER == 'KaiLight') {
     return 'deathnote';
   } else {
     return 'g2';
@@ -173,8 +174,7 @@ let quitcli = function(message, status = 0) {
 
 
 let isDev = () => {
-  return true;
-  // return env() == 'deathnote'
+  return env() == 'deathnote'
 };
 
 
