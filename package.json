@@ -19,6 +19,7 @@
   "homepage": "https://github.com/kailight/audiocare#readme",
   "dependencies": {
     "cli-color": "^1.2.0",
+    "moment": "^2.22.1",
     "readline-sync": "^1.4.9"
   },
   "directories": {

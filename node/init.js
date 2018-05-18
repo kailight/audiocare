@@ -36,11 +36,14 @@ let mode = 'norm'
 if (process.argv[2]) {
   if (process.argv[2] === 'configuration') {
     mode = 'configuration'
+  } else if (process.argv[2] === 'server') {
+    mode = 'server'
   } else {
     console.info('Flag '+process.argv[2]+' is not supported')
     process.exit(1)
   }
 }
+
 
 if (mode == 'norm') {
   let config = global.config = configLib.do()
@@ -51,10 +54,16 @@ if (mode == 'norm') {
   message('Starting AudioCare')
   AudioCare.start()
 } else if (mode === 'configuration') {
+
   message(clc.greenBright("Configuration started..."))
   let config = global.config = configLib.make()
   message(clc.greenBright("Configuration saved!"))
   process.exit()
+
+} else if (mode === 'server') {
+
+  ServerCare.start()
+
 }
 
 

@@ -124,7 +124,7 @@ let config = {
       m += `stored in file *data/data.txt* without sending.`
     }
     m = m.replace(/\*(.+?)\*/gm, clc.yellow.bold('$1') )
-    info( m )
+    message( m )
 
     let d = config.data
     let s = ''

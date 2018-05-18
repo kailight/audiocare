@@ -3,7 +3,7 @@ const path  = require('path');
 const clc   = require('cli-color');
 const readLineSync = require('readline-sync');
 
-let outputInfo = false
+let outputInfo = true
 let utils = {};
 
 module.exports = utils
