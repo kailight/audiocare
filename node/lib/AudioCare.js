@@ -18,7 +18,7 @@ let AudioCare = {
       //  ${process.cwd()}
       cmd = `c/audiocare-windows-x64.exe hello.wav`
     } else if (process.env.HOME == '/home/kailight') {
-      cmd = `./c/audiocare-ubuntu-amd64 -v -B ${config.sample_interval} -d ${config.dataCode}`
+      cmd = `./c/audiocare-ubuntu-amd64 -v -H ${config.sample_interval} -d ${config.dataCode}`
     } else {
       // cmd = `./aubio/build/examples/audiocare > ${file}`
       cmd = `./c/audiocare -B ${config.sample_interval} -d ${config.dataCode}`
