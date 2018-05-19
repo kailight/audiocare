@@ -61,7 +61,7 @@ and we should install jackd v1
 
 Test
 
-    > jacd -d alsa
+    > jackd -d alsa
 
 *it should not do any output, just should not crash*
 
