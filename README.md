@@ -93,21 +93,16 @@ To install the code you need Git. Git is installed on RPI by default. So.
 
 * Automatically link c libraries on start
 
-    I have no idea why on RPI it produces that libaubio.so
-    file we gotta carry along with us around, and link it every time
-    however for now just do
+    On RPI it produces that libaubio.so
+    file we gotta carry along with it, so for now do
 
-        > echo "LD_LIBRARY_PATH=/audiocare/c" >> /root/.profile
-
-* Add jack_connect to path as well
-
-        > echo path=$PATH:audiocare/c
-
+        > echo "export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/audiocare/c" >> ~/.bashrc
+        > reboot
+        
 #### 3. Test C script with Jackd
 
-    > reboot
-
-    > /audiocare/c/audiocare
+    > cd /audiocare/c     
+    > ./audiocare
 
 Should output funny numbers, however all values but MFCC gonna be 0
 - because jack ports aren't connected, so no capture from MIC
@@ -153,8 +148,8 @@ We need newer version of node (8+) to run the node script to control the C scipt
 
    Use **browser** to access RPI by WiFi
 
-   Use RPI IP address to access from other PC over local network (e.g. same address as for SSH access)
-   or by 127.0.0.1 from RPI desktop
+   Use RPI IP address to access UI from other PC (e.g. same address as for SSH access)
+   or use 127.0.0.1 to access UI from RPI desktop
 
 #### Run the node wrapper script
 
