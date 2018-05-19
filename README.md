@@ -101,7 +101,7 @@ To install the code you need Git. Git is installed on RPI by default. So.
 
 * Add jack_connect to path as well
 
-        > echo path=$PATH:/c
+        > echo path=$PATH:audiocare/c
 
 #### 3. Test C script with Jackd
 
