@@ -1,23 +1,30 @@
 const { exec } = require('child_process')
 
-let endFile = './data/data.txt'
+let dataFileNameTemplate = './data/#start#-#finish#-#entities#.txt'
+let dataFileName = null
 let rawFile = './data/raw.txt'
+const inChan = 'system:capture_1'
+const outChan = 'aubio:in_1'
 
 let AudioCare = {
+
   start: () => {
     info('AudioCare.start()')
     let config = global.config
-    console.info(config);
 
     let cmd
+
     if (process.platform == 'win32') {
       //  ${process.cwd()}
-      cmd = `aubio\\build\\examples\\AudioCare.exe hello.wav`
+      cmd = `c/audiocare-windows-x64.exe hello.wav`
+    } else if (process.env.HOME == '/home/kailight') {
+      cmd = `./c/audiocare-ubuntu-amd64 -v -B ${config.sample_interval} -d ${config.dataCode}`
     } else {
       // cmd = `./aubio/build/examples/audiocare > ${file}`
-      cmd = `./aubio/build/examples/audiocare -B ${config.sample_interval} -d ${config.dataCode} > ${rawFile}`
+      cmd = `./c/audiocare -B ${config.sample_interval} -d ${config.dataCode}`
     }
-    info(cmd)
+    info('Executing '+cmd)
+
     // info(config)
     // process.exit()
 
@@ -32,63 +39,63 @@ let AudioCare = {
     }
 
     let start = () => {
+
       info('+start()')
       let procChan = () => {
-        process_channels = exec('jack_connect system:capture_1 aubio:in_1', (error, stdout, stderr) => {
+        process_channels = exec(`jack_connect ${inChan} ${outChan}`, (error, stdout, stderr) => {
           if (error != null) {
             quit(`Jack connect spawn error: ${error}\``)
           }
         })
       }
       process_audocare = exec(cmd, (error, stdout, stderr) => {
-        // info(error, stdout, stderr)
-        // console.log(stdout);
-        // console.log(stderr)
         if (error !== null) {
           quit(`AudioCare C spawn error: ${error}`);
         }
       })
-      setTimeout(procChan,2000)
+      // process_audocare.stdout.pipe(fs.createWriteStream(rawFile))
+
+      setTimeout( procChan, 2000 )
+      setTimeout( startCapture, 3000 )
+
       info('-start()')
     }
 
+    let currentPipe = null
     let startCapture = () => {
-      message('Starting capture')
-      capture = true
+      let now = Date.now()
+      let duration = config.audio_duration * 1000
+      dataFileName = dataFileNameTemplate
+      dataFileName = dataFileName.replace('#start#', now )
+      dataFileName = dataFileName.replace('#finish#', now + duration )
+      dataFileName = dataFileName.replace('#entities#', config.dataCode )
+      message( 'Starting data capture into file '+dataFileName )
+      currentPipe = fs.createWriteStream( dataFileName )
+      process_audocare.stdout.pipe( currentPipe )
+      setTimeout( endCapture, duration )
     }
+
     let endCapture = () => {
-      message('Ending capture')
-      capture = false
-      buffer = fs.readFileSync(rawFile).toString()
-      buffer = buffer.replace( /[\s\S]+?==(.+)==\n(.+)/, "$1\n$2" )
-      fs.writeFileSync( endFile, buffer )
-      end()
+      message('Ending capture to file '+dataFileName)
+      // process_audocare.stdout.pause()
+      // buffer = fs.readFile(rawFile).toString()
+      // buffer = buffer.replace( /[\s\S]+?==(.+)==\n(.+)/, "$1\n$2" )
+      if (currentPipe) {
+        process_audocare.stdout.unpipe(currentPipe)
+      }
+      if (config.hasTimer) {
+        setTimeout( startCapture, config.timer * 1000 )
+      }
     }
 
-    let to = 3000
-    setTimeout( startCapture,to )
-    setTimeout( endCapture,to+(1000*config.audio_duration) )
-
-    let loop = () => {
-      info('loop()')
-      exec(cmd, (error, stdout, stderr) => {
-        // info(error, stdout, stderr)
-        // console.log(stdout);
-        // console.log(`${stderr}`);
-        if (error !== null) {
-          quit(`AudioCare C Script exec error: ${error}`);
-        }
-      })
-      info('-loop()')
-    }
     start()
 
-    // If timer is set - repeat
-    if (config.timer) {
-      setInterval(loop,config.timer*1000)
+    if (config.hasTimer) {
+
     }
     // Liker.run();
   }
+
 }
 
 

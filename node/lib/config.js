@@ -2,6 +2,7 @@ const fs    = require('fs');
 const path  = require('path');
 const clc   = require('cli-color');
 const readLineSync = require('readline-sync');
+const fileName  = path.resolve(ROOT+'/..')+'/configuration/config'
 
 let askContinue = () => {
   let y = readLineSync.prompt()
@@ -10,6 +11,8 @@ let askContinue = () => {
   }
 }
 let allowed = 'mfcc/mean/centroid/slope/spread/skewness/kurtosis/decrease/rollof'.split('/')
+let allowed_buffer_sizes = [512,1024,2048,4096,8192,16384,32768,65536]
+
 
 
 let config = {
@@ -24,7 +27,7 @@ let config = {
    * Loads config according to environment
    */
   load : function() {
-    let cfgraw = fs.readFileSync( './config' ).toString()
+    let cfgraw = fs.readFileSync( fileName ).toString()
     cfgraw = cfgraw.split("\n")
     let cfg = {}
     let config = {}
@@ -113,7 +116,7 @@ let config = {
       m += 'every '+clc.yellow.bold(config.timer)+' seconds '
       m += 'for '+clc.yellow.bold(config.audio_duration)+' seconds, '
     }
-    m += `with *${config.data.join(', ')}* taken every *${config.sample_interval}* seconds.\n`
+    m += `with *${config.data.join(', ')}* taken every *${config.sample_interval}* buffers.\n`
     m += "The data will be "
     if (config.send_timer) {
       m += `stored in file *data/data.txt* AND sent to *${config.server}* every *${config.send_timer}* seconds`
@@ -121,7 +124,7 @@ let config = {
       m += `stored in file *data/data.txt* without sending.`
     }
     m = m.replace(/\*(.+?)\*/gm, clc.yellow.bold('$1') )
-    info( m )
+    message( m )
 
     let d = config.data
     let s = ''
@@ -137,7 +140,7 @@ let config = {
     config.dataCode = s
 
 
-    message( "\nPress <ENTER> to confirm or any other key to exit" )
+    messageq( "\nPress <ENTER> to confirm or any other key to exit" )
     askContinue()
 
   },
@@ -152,7 +155,7 @@ let config = {
     } catch (e) {
       err(e);
       message( clc.red("Config file not found.") )
-      message( "Press <ENTER> to create new config" )
+      messageq( "Press <ENTER> to create new config" )
       askContinue()
       this.make(filename)
       return this.loadOrMake(filename)
@@ -175,7 +178,7 @@ server=#server#
 timer=#timer#
 # audio_duration (time) (1s/10s/1m etc, if timer is 0 this will by IGNORED)
 audio_duration=#audio_duration#
-# sample_interval (buffer) (512/1024/2048/4096/8192) - how often do we take audio sample
+# sample_interval (buffer) (${allowed_buffer_sizes.join('/')}) - how often do we take audio sample
 sample_interval=#sample_interval#
 # send_timer (time) how often we send data to server, if timer is 0 this will be IGNORED
 send_timer=#send_timer#
@@ -201,7 +204,7 @@ data=#data#
     fileContent = fileContent.replace( '#send_timer#',send_timer )
     fileContent = fileContent.replace( '#data#',data )
 
-    fs.writeFileSync('config',fileContent)
+    fs.writeFileSync( fileName, fileContent)
     message(clc.green('Configuration is saved into config file'))
 
   },
@@ -215,46 +218,52 @@ data=#data#
 
     switch (entry) {
       case 'device_id':
-        message("Enter device id (numerical)")
+        messageq("Enter device id (numerical, ex: 1/001)")
         val = readLineSync.prompt()
         if ( !val.match(/[0-9]+/) )
           e = 'Device should be numerical'
         break
       case 'server':
-        message("Enter central server IPv4 (e.g. 127.0.0.1, 127.0.0.1:80)")
+        messageq("Enter central server ip:port (ex: 127.0.0.1:80/192.168.0.1)")
+        message("Default 127.0.0.1:80")
         val = readLineSync.prompt()
+        if (!val) val = '127.0.0.1:80'
         if ( !val.match(/[0-9\.+]+:?[0-9]+/) )
           e = 'Server IPv4 should match pattern n.n.n.n or n.n.n.n:n'
         break
       case 'timer':
-        message("Enter timer, should be 0 or number affixed by either s or m (e.g. 0, 1s, 15s, 2m)")
+        messageq("Enter timer, should be 0 or number affixed by either s or m (e.g. 0, 1s, 15s, 2m)")
+        message("Default 1m")
         val = readLineSync.prompt()
+        if (val === '') val = '1m'
         if (val === '0') val = 0
         if ( val !== 0 && !val.match(/[0-9]+?m/) && !val.match(/[0-9]+?s/) )
           e = 'Timer should match pattern like 0 1s 15m etc'
         break
       case 'audio_duration':
-        message("Enter audio_duration, for how long we gonna grab the audio info number affixed by either s or m (e.g. 1s, 15s, 1m)")
+        messageq("Enter audio_duration, for how long we gonna grab the audio info number affixed by either s or m (e.g. 1s, 15s, 1m)")
+        message("Default 5s")
         val = readLineSync.prompt()
+        if (val === '') val = '5s'
         if (val === '0') val = 0
         if ( val !== 0 && !val.match(/[0-9]+?s/) && !val.match(/[0-9]+?m/) && !val.match(/[0-9]+?h/) )
           e = 'Audio duration should match pattern like 0 1s 15m etc'
         break
       case 'sample_interval':
-        message("Enter sample_interval, atm only buffer size is accepted, and limited to values of 512/1024/2048/4096/8192")
+        messageq("Enter sample_interval, atm only buffer size is accepted, and limited to values of "+allowed_buffer_sizes.join('/'))
         val = readLineSync.prompt()
-        if ( [512,1024,2048,4096,8192].indexOf( parseInt(val) ) === -1 )
-          e = 'sample_interval should equal one of 512/1024/2048/4096/8192'
+        if ( allowed_buffer_sizes.indexOf( parseInt(val) ) === -1 )
+          e = 'sample_interval should equal one of' + allowed_buffer_sizes.join('/')
         break
       case 'send_timer':
-        message("Enter send_timer value, 0 to disable, or number affixed by one of s/m/h (e.g 0, 30s, 1m, 24h)")
+        messageq("Enter send_timer value, 0 to disable, or number affixed by one of s/m/h (e.g 0, 30s, 1m, 24h)")
         val = readLineSync.prompt()
         if (val === '0') val = 0
         if ( val !== 0 && !val.match(/[0-9]+?m/) && !val.match(/[0-9]+?s/) && !val.match(/[0-9]+?h/) )
           e = 'Timer should match pattern like 0 30s 15m 1h etc'
         break
       case 'data':
-        message("Enter data parameter separated by comma, some of "+(allowed.join('/')))
+        messageq("Enter data parameter separated by comma, some of "+(allowed.join('/')))
         val = readLineSync.prompt()
         let vals = val.split(',')
         for (let n in vals) {
