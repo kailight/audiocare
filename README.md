@@ -1,5 +1,6 @@
 # AudioCare
 
+
 ## v0.0.1
 
 ### This Repository contains only the compiled C script
@@ -148,8 +149,6 @@ We need newer version of node (8+) to run the node script to control the C scipt
 * Test server
 
         > cd /audiocare
-        > mkdir data
-        > mkdir configuration
         > ./server
 
    Use **browser** to access RPI by WiFi
