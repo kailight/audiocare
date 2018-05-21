@@ -26,48 +26,94 @@ Does magics
 
 Alsa (Advanced Linux Sound Architecture) is low-level *driver* for linux audio devices
 
-First step would be to plug-in our devices and configure
-
-Raspberry PI has Jack output by default, so we only need to plug our microphone in.
+First step would be to plug-in our USB microphone/audiocard and configure
 
     > alsamixer
 
-unmute all devices with "m", set all levels to average value
-
-
-Test that microphone works
-
-    > arecord filename.wav
-
-Test that speakers work
-
-    > aplay filename.wav
-
-
-**If the tests not passed, its best to contact developer right here**
+unmute all controls with "m", set all levels to average value
 
 *On Raspbian Alsa/Jack config is not saved from QJackCtl UI, so Jack will
 always try to capture audio from built in audio card*
 
-Disable build-in audio card
+For now only way I found to make it play nice is
 
-    > sed -i -e 's/dtparam=audio=on/dtparam=audio=off/g' /boot/config.txt
+* Disable built-in audio card
 
-Yet still jackd won't work, since jackd v2 is bundled, and it requires DBus/Desktop
-and we should install jackd v1
+      > sed -i -e 's/dtparam=audio=on/dtparam=audio=off/g' /boot/config.txt
+
+* Set usb card to use hw:0 slot 
+
+      > echo "options snd-usb-audio index=0" >> /etc/modprobe.d/alsa-base.conf
+    
+* Reboot
+
+      > reboot
+           
+* Check that microphone is card0
+        
+      > arecord -l
+      
+  *should read `card 0: **Your Microphone Name**, device 0*`  
+
+   **If this is not true, contact developer right here**
+      
+* (optional) test that microphone works
+
+        > arecord filename.wav
+      
+  *this should record a wav file to disk*
+
+* (optional) Test that speakers work
+    
+      > aplay filename.wav
+
+
+#### 1.5 Configuring Jack
+
+We have 2 options, use Jack1 or Jack2. 
+
+##### 1.5.1 Install jack1 instead
+
+This way downside is I couldn't find way to change default driver properties
 
     > apt remove jackd
     > apt install jackd1
 
+##### 1.5.2 Configure default jack2
+    
+Running jackd2 allows us to control properties with jack_control
+    
+First we save usage of dbus without Desktop 
+    
+    > echo "export DBUS_SESSION_BUS_ADDRESS=unix:path=/run/dbus/system_bus_socket" >> ~/.bashrc
+    
+Check    
+    
+    > nano ~/.bashrc
+    
+Allow user to use audio     
+    
+    > echo "<policy user="pi">\n<allow own="org.freedesktop.ReserveDevice1.Audio0"/>\n</policy>" >> /etc/dbus-1/system.conf
+
+Check    
+    
+    > nano /etc/dbus-1/system.conf
+    
 Test
 
+    > reboot
     > jackd -d alsa
+    
+If it doesn't work with root access drop access with 
 
-*it should not do any output, just should not crash*
+    > exit
+    > jackd -d alsa     
+
+*test should not do any output, but jackd should not crash*
 
 #### 2. Install code
 
-To install the code you need Git. Git is installed on RPI by default. So.
+To install the code you need Git. Git is bundled with RPI.
 
 * Get root access
 
@@ -83,7 +129,7 @@ To install the code you need Git. Git is installed on RPI by default. So.
 
         > git clone https://github.com/kailight/audiocare.git
 
-  This will put the script into /audiocare
+    *This will put the script into /audiocare*
 
 * Chmod the repo to allow scripts execution
 
@@ -91,20 +137,25 @@ To install the code you need Git. Git is installed on RPI by default. So.
 
         > chmod -R 777 .
 
-* Automatically link c libraries on start
+* Automatically link c libraries on startup
 
-    On RPI it produces that libaubio.so
-    file we gotta carry along with it, so for now do
+    On RPI C compiler produces libaubio.so
+    we gotta carry along with it, so link it on startup
 
         > echo "export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/audiocare/c" >> ~/.bashrc
-        > reboot
+        
+* Reboot
+    
+      > reboot        
+        
+        
         
 #### 3. Test C script with Jackd
 
     > cd /audiocare/c     
     > ./audiocare
 
-Should output funny numbers, however all values but MFCC gonna be 0
+Should output funny numbers, however values but MFCC gonna be 0
 - because jack ports aren't connected, so no capture from MIC
 
 To connect ports we should open **another** terminal
@@ -116,6 +167,19 @@ While audiocare script works in terminal#1, in terminal#2 run
 
     > /usr/bin/jack_connect system:capture_1 aubio:in_1
 
+(optional) Using jack2 we also can pre-launch server and manually configure it, 
+for that we need third ssh window. We can also launch the server on startup.
+    
+    > jack_control start
+    > jack_control ds alsa
+    > jack_control dps device hw:0
+    > jack_control dps rate 48000
+    > jack_control dps period 4097
+
+To exit jack server
+
+    > jack_control exit
+
 **It works!** *if it doesn't, contact dev to investigate why*
 
 
@@ -123,7 +187,7 @@ While audiocare script works in terminal#1, in terminal#2 run
 
 We use nodejs wrapper script to run the main C script.
 
-By default an older version of node is bundled on Raspbian Stretch.
+By default an old 4.x version of node is bundled on Raspbian Stretch.
 
 We need newer version of node (8+) to run the node script to control the C scipt...
 
@@ -153,6 +217,7 @@ We need newer version of node (8+) to run the node script to control the C scipt
 
 #### Run the node wrapper script
 
+      > cd /audiocare  
       > ./start
 
 If no config file is found, the node script will ask you to configure itself
@@ -160,11 +225,11 @@ If no config file is found, the node script will ask you to configure itself
 **It works!** *if it doesn't, contact dev to investigate why*
 
 
-
 ## Updating
 
 After installation is complete and script is working use
 
-    > /audiocare/update
+    > cd /audiocare
+    > ./update
 
 To update the code from GIT repo
