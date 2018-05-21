@@ -12,16 +12,18 @@ let AudioCare = {
     info('AudioCare.start()')
     let config = global.config
 
+    let c_script_path
     let cmd
 
     if (process.platform == 'win32') {
       //  ${process.cwd()}
       cmd = `c/audiocare-windows-x64.exe hello.wav`
     } else if (process.env.HOME == '/home/kailight') {
-      cmd = `./c/audiocare-ubuntu-amd64 -v -H ${config.sample_interval} -d ${config.dataCode}`
+      c_script_path = path.resolve('./c/audiocare-ubuntu-amd64')
+      cmd = `${c_script_path} -v -B ${config.sample_interval} -H ${config.sample_interval} -d ${config.dataCode}`
     } else {
       // cmd = `./aubio/build/examples/audiocare > ${file}`
-      cmd = `./c/audiocare -B ${config.sample_interval} -d ${config.dataCode}`
+      cmd = `./c/audiocare -B ${config.sample_interval} -H ${config.sample_interval} -d ${config.dataCode}`
     }
     info('Executing '+cmd)
 
@@ -52,6 +54,9 @@ let AudioCare = {
         if (error !== null) {
           quit(`AudioCare C spawn error: ${error}`);
         }
+        if (stderr) {
+          quit(`AudioCare C error: ${stderr}`);
+        }
       })
       // process_audocare.stdout.pipe(fs.createWriteStream(rawFile))
 
@@ -63,6 +68,7 @@ let AudioCare = {
 
     let currentPipe = null
     let startCapture = () => {
+
       let now = Date.now()
       let duration = config.audio_duration * 1000
       dataFileName = dataFileNameTemplate
@@ -73,6 +79,7 @@ let AudioCare = {
       currentPipe = fs.createWriteStream( dataFileName )
       process_audocare.stdout.pipe( currentPipe )
       setTimeout( endCapture, duration )
+
     }
 
     let endCapture = () => {

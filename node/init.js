@@ -45,14 +45,16 @@ if (process.argv[2]) {
 }
 
 
+console.info('Environmnet: '+env)
+
+
 if (mode == 'norm') {
   let config = global.config = configLib.do()
 
-  message('Starting ServerCare')
   ServerCare.start()
 
-  message('Starting AudioCare')
   AudioCare.start()
+
 } else if (mode === 'configuration') {
 
   message(clc.greenBright("Configuration started..."))
