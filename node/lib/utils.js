@@ -155,7 +155,7 @@ let include = function( location ) {
 
 
 let env = () => {
-  if (process.env.SUDO_USER == 'KaiLight') {
+  if (process.env.SUDO_USER == 'KaiLight' || process.env.SUDO_USER == 'kailight') {
     return 'deathnote';
   } else {
     return 'g2';
