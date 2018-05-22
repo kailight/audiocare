@@ -195,11 +195,21 @@ We need newer version of node (8+) to run the node script to control the C scipt
 
         > apt remove nodejs
 
-* Install node (tested on node v8)
+**Here we have different ways of installing node depending on our Processor**
+
+* Install node (for ARMv8)
 
         > curl -sL https://deb.nodesource.com/setup_8.x | sudo -E bash -
         > sudo apt-get install -y nodejs
-
+        
+* Install node (for ARMv6) 
+        
+        <!--
+            > curl https://nodejs.org/dist/v8.11.2/node-v8.11.2-linux-armv6l.tar.xz | tar xvz
+        -->
+        > wget https://nodejs.org/dist/v8.11.2/node-v8.11.2-linux-armv6l.tar.xz
+        > tar -xvz node-v8.11.2-linux-armv6l.tar.xz --directory /usr/local --strip-components 1
+        
 * Install npm packages
 
         > cd /audiocare
@@ -232,4 +242,4 @@ After installation is complete and script is working use
     > cd /audiocare
     > ./update
 
-To update the code from GIT repo
+To update the code from GIT repo as I make changes to it
